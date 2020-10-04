@@ -57,7 +57,7 @@ for line in mimeapps_lines:
 default_associations = list(filter(lambda assoc: assoc[0] not in application_mime_types, default_associations))
 default_associations.extend([(mime_type, os.path.basename(args.desktop_file)) for mime_type in application_mime_types])
 
-# Write out the new contents of mimeapps.list to stdout.
+# Write out the new contents to ~/.config/mimeapps.list.
 with open(mimeapps_filename, 'w+') as f:
     if default_associations:
         print(default_applications_header, file=f)
