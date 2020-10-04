@@ -7,7 +7,7 @@ Collection of scripts that helps with easily setting file associations using
 
 Will update `~/.config/mimeapps.list` to add mime type associations for all
 mime types that can be opened as listed in the given application `.desktop`
-file. Then outputs the contents for a new `mimeapps.list` file to standard
-output, with a `[Default Applications]` section containing a sorted list of
-existing and new file associations, and then the remainder of the input
-`~/.config/mimeapps.list` file.
+file. Will update `~/.config/mimeapps.list` such that it first contains a new
+`[Default Applications]` section with a sorted list of all existing, newly
+added and overwritten mime type associations after processing the given
+`.desktop` file.

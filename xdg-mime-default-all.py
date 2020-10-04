@@ -7,10 +7,10 @@ import sys
 parser = argparse.ArgumentParser(description=
         'Will update "~/.config/mimeapps.list" to add mime type associations for '
         'all mime types that can be opened as listed in the given application .desktop file. '
-        'Then outputs the contents for a new "mimeapps.list" file to standard '
-        'output, with a "[Default Applications]" section containing a sorted list '
-        'of existing and new file associations, and then the remainder of the input '
-        '"~/.config/mimeapps.list" file.')
+        'Will update "~/.config/mimeapps.list" such that it first contains a new '
+        '"[Default Applications]" section with a sorted list of all existing, '
+        'newly added and overwritten mime type associations after processing the '
+        'given .desktop file.')
 parser.add_argument('desktop_file', metavar='<application .desktop file>', type=str,
         help='Path to the application .desktop file, usually in "/usr/share/applications".')
 
@@ -26,7 +26,7 @@ application_mime_types = []
 with open(args.desktop_file) as f:
     for line in f.read().splitlines():
         if line.startswith(mime_type_prefix):
-            application_mime_types = list(filter(None, line[len(mime_type_prefix):].strip().split(';')))
+            application_mime_types.extend(list(filter(None, line[len(mime_type_prefix):].strip().split(';'))))
 
 # Read in default mime application settings.
 mimeapps_filename = os.path.expanduser("~/.config/mimeapps.list")
@@ -54,9 +54,10 @@ default_associations = list(filter(lambda assoc: assoc[0] not in application_mim
 default_associations.extend([(mime_type, os.path.basename(args.desktop_file)) for mime_type in application_mime_types])
 
 # Write out the new contents of mimeapps.list to stdout.
-if default_associations:
-    print(default_applications_header)
-    for mime_type, application in sorted(default_associations):
-        print(f"{mime_type}={application}")
-for line in other_mimeapps_lines:
-    print(line)
+with open(mimeapps_filename, 'w+') as f:
+    if default_associations:
+        print(default_applications_header, file=f)
+        for mime_type, application in sorted(default_associations):
+            print(f"{mime_type}={application}", file=f)
+    for line in other_mimeapps_lines:
+        print(line, file=f)
