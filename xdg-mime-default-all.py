@@ -23,9 +23,10 @@ if not os.path.exists(args.desktop_file):
 # Read mime types from the desktop file.
 mime_type_prefix = "MimeType="
 application_mime_types = []
-for line in open(args.desktop_file):
-    if line.startswith(mime_type_prefix):
-        application_mime_types = list(filter(None, line[len(mime_type_prefix):].rstrip().split(';')))
+with open(args.desktop_file) as f:
+    for line in f.read().splitlines():
+        if line.startswith(mime_type_prefix):
+            application_mime_types = list(filter(None, line[len(mime_type_prefix):].strip().split(';')))
 
 # Read in default mime application settings.
 mimeapps_filename = os.path.expanduser("~/.config/mimeapps.list")
